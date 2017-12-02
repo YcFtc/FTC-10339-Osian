@@ -1,37 +1,8 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -43,23 +14,34 @@ import java.security.KeyStore;
 
 
 /** This OPMode Was designed to Find the jewel and push off the opposing alliance's jewel.**/
-
-
-@TeleOp(name="Screw you Red Jewel", group="Linear Opmode")
+@Autonomous(name="Blue Team Jewel", group="Linear Opmode")
 
 public class Basic_Autonomous_Jewel extends LinearOpMode {
 
-    // Declare OpMode members.
+    // Declare controllable variables and Opmode members: variables that affect the program such as teamred and teamblue, and creation of motor, servo, and sensor variables
+    int redjewelmin = 0;
+    int redjewelmax = 0;
+    int bluejewelmin = 0;
+    int bluejewelmax = 0;
+    int leftservograbberclosedposition = 100; // the position that the left grabber arm will be closed at.
+    int rightservograbberclosedposition = 100; // the position that the right grabber arm will be closed at.
+    int leftservograbberopenposition = 0; // the position that the left servo grabber will be open at.
+    int rightservograbberopenposition = 0; // the position that the right servo grabber will be open at.
+    boolean jewelcoloursensorloop = false;
     boolean Matrix12vMotor = true;
     boolean AndymarkNeverest40 = false;
     boolean teamred = false;
     boolean teamblue = true;
+
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor rightfront = null;
     private DcMotor leftfront = null;
     private DcMotor righthind = null;
     private DcMotor lefthind = null;
+    private DcMotor glyphlyft = null;
     private Servo jewelarm = null;
+    private Servo glyphl = null;
+    private Servo glyphr = null;
     private ColorSensor colorsensor = null;
     @Override
     public void runOpMode() {
@@ -80,20 +62,65 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
         runtime.reset();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        //Grab glyph
+/*glyphl.setPosition(leftservograbberclosedposition);
+glyphr.setPosition(rightservograbberclosedposition);
+glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+glyphlyft.setTargetPosition(840/);
+glyphlyft.setPower(.25);*/
         //Puts arm into position
         jewelarm.setPosition(0);
-        sleep(400);
+        sleep(300);
 
         if(teamblue = true){
             //execute code for blue team jewel Here
-
+            while (jewelcoloursensorloop = false){
+                if (/*If there is a blue jewel*/ colorsensor.blue()>bluejewelmin && colorsensor.blue()<bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
+                // Execute Order 66
+                DriveFowardPosition(-.5,-1);
+                ResetAllEncoders();
+                DriveFowardPosition(.5,1);
+                ResetAllEncoders();
+                jewelcoloursensorloop = true;
+                }
+                else{
+                    if (/*If there is a red jewel*/ colorsensor.red()>redjewelmin && colorsensor.red()<redjewelmax/* and there is no blue jewel*/ && colorsensor.blue()<bluejewelmin) {
+                        // Execute Order 66
+                        DriveFowardPosition(.5, 1);
+                        ResetAllEncoders();
+                        DriveFowardPosition(-.5, -1);
+                        ResetAllEncoders();
+                        jewelcoloursensorloop = true;
+                    }
+                    }
+            }
         }
         else{
             if(teamred = true){
                 //execute code for red team jewel here
-
+                while (jewelcoloursensorloop = false){
+                    if (/*If there is a blue jewel*/ colorsensor.blue()>bluejewelmin && colorsensor.blue()<bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
+                        // Execute Order 66
+                        DriveFowardPosition(.5,1);
+                        ResetAllEncoders();
+                        DriveFowardPosition(-.5,-1);
+                        ResetAllEncoders();
+                        jewelcoloursensorloop = true;
+                    }
+                    else{
+                        if (/*If there is a red jewel*/ colorsensor.red()>redjewelmin && colorsensor.red()<redjewelmax/* and there is no blue jewel*/ && colorsensor.blue()<bluejewelmin) {
+                            // Execute Order 66
+                            DriveFowardPosition(-.5, -1);
+                            ResetAllEncoders();
+                            DriveFowardPosition(.5, 1);
+                            ResetAllEncoders();
+                            jewelcoloursensorloop = true;
+                        }
+                    }
+                }
             }
         }
+        //Put our glyph into the Cryptobox
         }
         public void ResetAllEncoders (){
             rightfront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -115,10 +142,10 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
         }
         else {
             if(AndymarkNeverest40 = true){
-                rightfront.setTargetPosition((int) Math.round(280*rotations));
-                leftfront.setTargetPosition((int) Math.round(280*rotations));
-                righthind.setTargetPosition((int) Math.round(280*rotations));
-                lefthind.setTargetPosition((int) Math.round(280*rotations));
+                rightfront.setTargetPosition((int) Math.round(1120*rotations));
+                leftfront.setTargetPosition((int) Math.round(1120*rotations));
+                righthind.setTargetPosition((int) Math.round(1120*rotations));
+                lefthind.setTargetPosition((int) Math.round(1120*rotations));
             }
             }
             Drivefoward(power);
@@ -133,7 +160,3 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
         lefthind.setPower(power);
        }
     }
-
-
-
-
