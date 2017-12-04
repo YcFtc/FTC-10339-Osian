@@ -1,24 +1,31 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+import java.security.KeyStore;
 
 
-/** This OPMode Was designed to Find the jewel and push off the opposing alliance's jewel.**/
+/* This OPMode Was designed to Find the jewel and push off the opposing alliance's jewel.*/
 @Autonomous(name="Blue Team Jewel", group="Linear Opmode")
-
-public class Basic_Autonomous_Jewel extends LinearOpMode {
+@Disabled
+public class Basic_Autonomous_Jewel_and_Glyph extends LinearOpMode {
 
     // Declare controllable variables and Opmode members: variables that affect the program such as teamred and teamblue, and creation of motor, servo, and sensor variables
     int redjewelmin = 0;
     int redjewelmax = 0;
     int bluejewelmin = 0;
     int bluejewelmax = 0;
+    int leftservograbberclosedposition = 100; // the position that the left grabber arm will be closed at.
+    int rightservograbberclosedposition = 100; // the position that the right grabber arm will be closed at.
+    int leftservograbberopenposition = 0; // the position that the left servo grabber will be open at.
+    int rightservograbberopenposition = 0; // the position that the right servo grabber will be open at.
     boolean jewelcoloursensorloop = false;
     boolean Matrix12vMotor = true;
     boolean AndymarkNeverest40 = false;
@@ -30,7 +37,10 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
     private DcMotor leftfront = null;
     private DcMotor righthind = null;
     private DcMotor lefthind = null;
+    private DcMotor glyphlyft = null;
     private Servo jewelarm = null;
+    private Servo glyphl = null;
+    private Servo glyphr = null;
     private ColorSensor colorsensor = null;
     @Override
     public void runOpMode() {
@@ -51,6 +61,12 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
         runtime.reset();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+        //Grab glyph
+glyphl.setPosition(leftservograbberclosedposition);
+glyphr.setPosition(rightservograbberclosedposition);
+glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+glyphlyft.setTargetPosition(840);
+glyphlyft.setPower(.25);
         //Puts arm into position
         jewelarm.setPosition(0);
         sleep(300);
@@ -101,6 +117,21 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
                         }
                     }
                 }
+            }
+        }
+        //Put our glyph into the Cryptobox
+        if(teamblue = true){
+            //blue team code here
+            // step 1: Look for VuMark
+            while (/*no vumark seen*/){
+            Drivefoward(.2);
+            }
+            if ()
+        }
+        else{
+            if (teamred = true){
+                //red team code here
+
             }
         }
         }
