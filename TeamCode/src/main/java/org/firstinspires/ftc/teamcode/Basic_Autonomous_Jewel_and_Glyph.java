@@ -123,10 +123,7 @@ glyphlyft.setPower(.25);
         if(teamblue = true){
             //blue team code here
             // step 1: Look for VuMark
-            while (/*no vumark seen*/){
-            Drivefoward(.2);
-            }
-            if ()
+
         }
         else{
             if (teamred = true){

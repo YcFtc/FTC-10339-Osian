@@ -15,10 +15,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Basic_Autonomous_Jewel extends LinearOpMode {
 
     // Declare controllable variables and Opmode members: variables that affect the program such as teamred and teamblue, and creation of motor, servo, and sensor variables
-    int redjewelmin = 0;
-    int redjewelmax = 0;
-    int bluejewelmin = 0;
-    int bluejewelmax = 0;
+    int redjewelmin = 1;
+    int redjewelmax = 5;
+    int bluejewelmin = 1;
+    int bluejewelmax = 5;
     boolean jewelcoloursensorloop = false;
     boolean Matrix12vMotor = true;
     boolean AndymarkNeverest40 = false;
@@ -35,7 +35,7 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
     @Override
     public void runOpMode() {
         rightfront = hardwareMap.get(DcMotor.class, "rf");
-        leftfront = hardwareMap.get(DcMotor.class, "rlf");
+        leftfront = hardwareMap.get(DcMotor.class, "lf");
         righthind = hardwareMap.get(DcMotor.class, "rh");
         lefthind = hardwareMap.get(DcMotor.class, "lh");
         jewelarm = hardwareMap.get(Servo.class, "jewelarm");
@@ -52,13 +52,13 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         //Puts arm into position
-        jewelarm.setPosition(0);
+        jewelarm.setPosition(100);
         sleep(300);
 
         if(teamblue = true){
             //execute code for blue team jewel Here
             while (jewelcoloursensorloop = false){
-                if (/*If there is a blue jewel*/ colorsensor.blue()>bluejewelmin && colorsensor.blue()<bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
+                if (/*If there is a blue jewel*/ colorsensor.blue()>=bluejewelmin && colorsensor.blue()<bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
                 // Execute Order 66
                 DriveFowardPosition(-.5,-1);
                 ResetAllEncoders();
@@ -67,7 +67,7 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
                 jewelcoloursensorloop = true;
                 }
                 else{
-                    if (/*If there is a red jewel*/ colorsensor.red()>redjewelmin && colorsensor.red()<redjewelmax/* and there is no blue jewel*/ && colorsensor.blue()<bluejewelmin) {
+                    if (/*If there is a red jewel*/ colorsensor.red()>=redjewelmin && colorsensor.red()<redjewelmax/* and there is no blue jewel*/ && colorsensor.blue()<bluejewelmin) {
                         // Execute Order 66
                         DriveFowardPosition(.5, 1);
                         ResetAllEncoders();
@@ -134,6 +134,7 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
             while(rightfront.isBusy() && leftfront.isBusy() && righthind.isBusy() && lefthind.isBusy()){
              //Sing "La La La, I killed a man"
             }
+
     }
        public void Drivefoward (double power){
         rightfront.setPower(power);
