@@ -55,9 +55,9 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
         jewelarm.setPosition(100);
         sleep(300);
 
-        if(teamblue = true){
+        if(teamblue == true){
             //execute code for blue team jewel Here
-            while (jewelcoloursensorloop = false){
+            while (jewelcoloursensorloop == false){
                 if (/*If there is a blue jewel*/ colorsensor.blue()>=bluejewelmin && colorsensor.blue()<bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
                 // Execute Order 66
                 DriveFowardPosition(-.5,-1);
@@ -79,9 +79,9 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
             }
         }
         else{
-            if(teamred = true){
+            if(teamred == true){
                 //execute code for red team jewel here
-                while (jewelcoloursensorloop = false){
+                while (jewelcoloursensorloop == false){
                     if (/*If there is a blue jewel*/ colorsensor.blue()>bluejewelmin && colorsensor.blue()<bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
                         // Execute Order 66
                         DriveFowardPosition(.5,1);
