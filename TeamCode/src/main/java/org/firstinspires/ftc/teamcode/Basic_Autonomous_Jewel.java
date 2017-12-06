@@ -116,14 +116,14 @@ public class Basic_Autonomous_Jewel extends LinearOpMode {
         leftfront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         righthind.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lefthind.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if(Matrix12vMotor = true) {
+        if(Matrix12vMotor == true) {
             rightfront.setTargetPosition((int) Math.round(1478.4*rotations));
             leftfront.setTargetPosition((int) Math.round(1478.4*rotations));
             righthind.setTargetPosition((int) Math.round(1478.4*rotations));
             lefthind.setTargetPosition((int) Math.round(1478.4*rotations));
         }
         else {
-            if(AndymarkNeverest40 = true){
+            if(AndymarkNeverest40 == true){
                 rightfront.setTargetPosition((int) Math.round(1120*rotations));
                 leftfront.setTargetPosition((int) Math.round(1120*rotations));
                 righthind.setTargetPosition((int) Math.round(1120*rotations));
