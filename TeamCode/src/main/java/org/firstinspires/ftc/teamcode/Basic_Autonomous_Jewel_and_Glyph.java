@@ -10,7 +10,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import java.security.KeyStore;
-
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /* This OPMode Was designed to Find the jewel and push off the opposing alliance's jewel.*/
 @Autonomous(name="Blue Team Jewel", group="Linear Opmode")
@@ -18,15 +31,16 @@ import java.security.KeyStore;
 public class Basic_Autonomous_Jewel_and_Glyph extends LinearOpMode {
 
     // Declare controllable variables and Opmode members: variables that affect the program such as teamred and teamblue, and creation of motor, servo, and sensor variables
-    int redjewelmin = 0;
-    int redjewelmax = 0;
-    int bluejewelmin = 0;
-    int bluejewelmax = 0;
+    int redjewelmin = 1;
+    int redjewelmax = 5;
+    int bluejewelmin = 1;
+    int bluejewelmax = 5;
     int leftservograbberclosedposition = 100; // the position that the left grabber arm will be closed at.
     int rightservograbberclosedposition = 100; // the position that the right grabber arm will be closed at.
     int leftservograbberopenposition = 0; // the position that the left servo grabber will be open at.
     int rightservograbberopenposition = 0; // the position that the right servo grabber will be open at.
     boolean jewelcoloursensorloop = false;
+    boolean vumarkloop = false;
     boolean Matrix12vMotor = true;
     boolean AndymarkNeverest40 = false;
     boolean teamred = false;
@@ -42,14 +56,28 @@ public class Basic_Autonomous_Jewel_and_Glyph extends LinearOpMode {
     private Servo glyphl = null;
     private Servo glyphr = null;
     private ColorSensor colorsensor = null;
+    //Initialize Vuforia
+    public static final String TAG = "Vuforia VuMark Sample";
+    OpenGLMatrix lastLocation = null;
+    VuforiaLocalizer vuforia;
+
     @Override
     public void runOpMode() {
         rightfront = hardwareMap.get(DcMotor.class, "rf");
-        leftfront = hardwareMap.get(DcMotor.class, "rlf");
+        leftfront = hardwareMap.get(DcMotor.class, "lf");
         righthind = hardwareMap.get(DcMotor.class, "rh");
         lefthind = hardwareMap.get(DcMotor.class, "lh");
         jewelarm = hardwareMap.get(Servo.class, "jewelarm");
         colorsensor = hardwareMap.get(ColorSensor.class, "jacs");
+        //initialize vuforia paramaters here
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters.vuforiaLicenseKey = "";
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTrackables.activate();
         rightfront.setDirection(DcMotorSimple.Direction.REVERSE);
         righthind.setDirection(DcMotorSimple.Direction.REVERSE);
         ResetAllEncoders();
@@ -64,6 +92,7 @@ public class Basic_Autonomous_Jewel_and_Glyph extends LinearOpMode {
         //Grab glyph
 glyphl.setPosition(leftservograbberclosedposition);
 glyphr.setPosition(rightservograbberclosedposition);
+glyphlyft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 glyphlyft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 glyphlyft.setTargetPosition(840);
 glyphlyft.setPower(.25);
@@ -71,10 +100,10 @@ glyphlyft.setPower(.25);
         jewelarm.setPosition(0);
         sleep(300);
 
-        if(teamblue = true){
+        if(teamblue == true){
             //execute code for blue team jewel Here
-            while (jewelcoloursensorloop = false){
-                if (/*If there is a blue jewel*/ colorsensor.blue()>bluejewelmin && colorsensor.blue()<bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
+            while (jewelcoloursensorloop == false){
+                if (/*If there is a blue jewel*/ colorsensor.blue()>=bluejewelmin && colorsensor.blue()<=bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
                 // Execute Order 66
                 DriveFowardPosition(-.5,-1);
                 ResetAllEncoders();
@@ -83,7 +112,7 @@ glyphlyft.setPower(.25);
                 jewelcoloursensorloop = true;
                 }
                 else{
-                    if (/*If there is a red jewel*/ colorsensor.red()>redjewelmin && colorsensor.red()<redjewelmax/* and there is no blue jewel*/ && colorsensor.blue()<bluejewelmin) {
+                    if (/*If there is a red jewel*/ colorsensor.red()>=redjewelmin && colorsensor.red()<=redjewelmax/* and there is no blue jewel*/ && colorsensor.blue()<bluejewelmin) {
                         // Execute Order 66
                         DriveFowardPosition(.5, 1);
                         ResetAllEncoders();
@@ -95,10 +124,10 @@ glyphlyft.setPower(.25);
             }
         }
         else{
-            if(teamred = true){
+            if(teamred == true){
                 //execute code for red team jewel here
-                while (jewelcoloursensorloop = false){
-                    if (/*If there is a blue jewel*/ colorsensor.blue()>bluejewelmin && colorsensor.blue()<bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
+                while (jewelcoloursensorloop == false){
+                    if (/*If there is a blue jewel*/ colorsensor.blue()>=bluejewelmin && colorsensor.blue()<=bluejewelmax/* and there is no red jewel*/ && colorsensor.red()<redjewelmin){
                         // Execute Order 66
                         DriveFowardPosition(.5,1);
                         ResetAllEncoders();
@@ -107,7 +136,7 @@ glyphlyft.setPower(.25);
                         jewelcoloursensorloop = true;
                     }
                     else{
-                        if (/*If there is a red jewel*/ colorsensor.red()>redjewelmin && colorsensor.red()<redjewelmax/* and there is no blue jewel*/ && colorsensor.blue()<bluejewelmin) {
+                        if (/*If there is a red jewel*/ colorsensor.red()>=redjewelmin && colorsensor.red()<=redjewelmax/* and there is no blue jewel*/ && colorsensor.blue()<bluejewelmin) {
                             // Execute Order 66
                             DriveFowardPosition(-.5, -1);
                             ResetAllEncoders();
@@ -120,7 +149,7 @@ glyphlyft.setPower(.25);
             }
         }
         //Put our glyph into the Cryptobox
-        if(teamblue = true){
+        if(teamblue == true){
             //blue team code here
             // step 1: Look for VuMark
 
@@ -131,7 +160,26 @@ glyphlyft.setPower(.25);
 
             }
         }
+    //move until we see the vumark
+
+        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        while (vumarkloop == false){
+            Drivefoward(.15);
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN){
+                Drivefoward(0);
+                ResetAllEncoders();
+                vumarkloop = true;
+            }
         }
+    if (teamblue == true){
+            while ()
+    }
+    else {
+        if (teamred == true){
+
+        }
+    }
+    }
         public void ResetAllEncoders (){
             rightfront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             leftfront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
